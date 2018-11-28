@@ -2,12 +2,13 @@ from django.contrib.auth import authenticate
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import views as authview
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 
 def login(request):
     username = request.POST.get('username')
     password = request.POST.get('password')
     user = authenticate(username=username, password=password)
+
     if user is not None:
         if user.is_active:
             authview.auth_login(request, user)
@@ -15,7 +16,8 @@ def login(request):
         else:
             return render(request, 'users/login.html', {})
     else:
-        return render(request, 'users/login.html', {})
+        context = {'form': AuthenticationForm}
+        return render(request, 'users/login.html', context)
 
 
 def logout(request):
